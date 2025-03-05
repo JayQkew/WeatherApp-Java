@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -25,8 +26,6 @@ import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-import javax.security.auth.login.LoginException;
-
 public class WeatherAPI {
     Context context;
     Activity activity;
@@ -35,6 +34,9 @@ public class WeatherAPI {
 
     static JSONObject weatherResponse;
     static JSONObject currentResponse;
+
+    private boolean isForecastReady;
+    private boolean isCurrentReady;
 
     WeatherData[] weatherForecast = new WeatherData[6];
 
@@ -104,8 +106,10 @@ public class WeatherAPI {
             }
         });
 
-        Volley.newRequestQueue(context).add(requestForecast);
-        Volley.newRequestQueue(context).add(requestCurrent);
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(requestForecast);
+        requestQueue.add(requestCurrent);
+
     }
 
     private void getDataForcast(){
@@ -128,12 +132,8 @@ public class WeatherAPI {
                 weatherForecast[i] = new WeatherData(condition, currTemp, minTemp, maxTemp);
             }
             Log.i("CHECK_TEMP", "HERE AFTER FORECAST TEMP");
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    populateUI();
-                }
-            });
+            isForecastReady = true;
+            checkAndPopulateUI();
         } catch (JSONException e) {
             Log.e("CHECK_TEMP_ERROR", e.toString());
         }
@@ -152,6 +152,8 @@ public class WeatherAPI {
             Log.i("CHECK_TEMP", "HERE BEFORE CURR TEMP");
             weatherForecast[0] = new WeatherData(condition, currTemp, minTemp, maxTemp);
             Log.i("CHECK_TEMP", "HERE AFTER CURR TEMP");
+            isCurrentReady = true;
+            checkAndPopulateUI();
         } catch (JSONException e){
             Log.e("CHECK_TEMP_ERROR", e.toString());
         }
@@ -259,5 +261,22 @@ public class WeatherAPI {
         }
 
         return days;
+    }
+
+    private void checkAndPopulateUI() {
+        if (isForecastReady && isCurrentReady) {
+            Log.i("CHECK_TEMP", "Both APIs responded. Updating UI now...");
+
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    populateUI();
+                }
+            });
+        }
+    }
+
+    public interface WeatherCallback{
+
     }
 }

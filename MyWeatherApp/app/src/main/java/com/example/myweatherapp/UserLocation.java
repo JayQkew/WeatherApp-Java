@@ -116,10 +116,7 @@ public class UserLocation {
                     }
                 });
             } else {
-
-                // go to error screen here
-                Toast.makeText(context, "Please turn on your location...", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                Intent intent = new Intent(context, ErrorActivity.class);
                 activity.startActivity(intent);
             }
         } else {
@@ -181,8 +178,7 @@ public class UserLocation {
 
         denyButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, ErrorActivity.class);
-            Bundle bundle = intent.getExtras();
-            startActivity(context, intent, bundle);
+            activity.startActivity(intent);
             dialog.dismiss(); // Close dialog after action
         });
     }

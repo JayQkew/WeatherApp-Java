@@ -52,10 +52,4 @@ public class MainActivity extends AppCompatActivity{
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    // Function to get day names dynamically
-    private String getDayName(int index) {
-        String[] days = {"Saturday", "Sunday", "Monday", "Tuesday", "Wednesday"};
-        return days[index % days.length]; // Just an example
-    }
-
 }
