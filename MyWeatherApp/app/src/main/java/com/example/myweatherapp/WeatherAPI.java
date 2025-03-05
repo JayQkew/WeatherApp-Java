@@ -275,8 +275,4 @@ public class WeatherAPI {
             });
         }
     }
-
-    public interface WeatherCallback{
-
-    }
 }
